@@ -1,0 +1,10 @@
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Manifest-Version: 1.0
+Bundle-Vendor: nuxeo.labs.signature.webui
+Bundle-Version: 1.0.0
+Bundle-Name: nuxeo-labs-signature-webui-core
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: nuxeo.labs.signature.webui.nuxeo-labs-signature-webui-core;singleton=true
+Nuxeo-Component: OSGI-INF/signature-webui-contrib.xml
+Nuxeo-WebModule: org.nuxeo.ecm.webengine.app.WebEngineModule;name=signature;package=nuxeo/labs/signature/webui;headless=true

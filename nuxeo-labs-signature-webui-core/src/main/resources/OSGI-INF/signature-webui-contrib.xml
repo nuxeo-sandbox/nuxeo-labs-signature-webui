@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<component name="nuxeo.labs.signature.webui.contrib">
+
+  <require>org.nuxeo.ecm.platform.signature.api.sign.SignatureService</require>
+  <require>org.nuxeo.ecm.platform.signature.api.user.CUserService</require>
+
+  <documentation>
+    Deploys the Web UI resources and REST endpoints for the Digital Signature addon.
+    @since 2025.16
+  </documentation>
+
+  <!-- Register the Web UI entry-point HTML as a web resource -->
+  <extension target="org.nuxeo.ecm.platform.WebResources" point="resources">
+    <resource name="nuxeo-labs-signature-contrib.html" type="import">
+      <uri>/ui/nuxeo-labs-signature/nuxeo-labs-signature-contrib.html</uri>
+    </resource>
+  </extension>
+
+  <!-- Append our resource to the web-ui bundle so it gets loaded -->
+  <extension target="org.nuxeo.ecm.platform.WebResources" point="bundles">
+    <bundle name="web-ui">
+      <resources append="true">
+        <resource>nuxeo-labs-signature-contrib.html</resource>
+      </resources>
+    </bundle>
+  </extension>
+
+</component>

@@ -1,0 +1,311 @@
+<!--
+(C) Copyright 2026 Nuxeo (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+    Thibaud Arguillere
+-->
+
+<!--
+`nuxeo-labs-signature-tab`
+Document tab displaying signing status, existing signatures, signing form, and root certificate download.
+@group Nuxeo UI
+@element nuxeo-labs-signature-tab
+@since 2025.16
+-->
+<dom-module id="nuxeo-labs-signature-tab">
+  <template>
+    <style include="nuxeo-styles iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+      .container {
+        padding: 16px;
+      }
+      .section {
+        margin-bottom: 24px;
+      }
+      .section-title {
+        font-size: 1.1em;
+        font-weight: bold;
+        margin-bottom: 12px;
+        color: var(--nuxeo-title-color, #213f7d);
+      }
+      .cert-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .cert-table th,
+      .cert-table td {
+        padding: 8px 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--nuxeo-border, #e0e0e0);
+      }
+      .cert-table th {
+        background: var(--nuxeo-table-header-background, #f5f5f5);
+        font-weight: 600;
+      }
+      .sign-form {
+        max-width: 500px;
+      }
+      .sign-form .field {
+        margin-bottom: 16px;
+      }
+      .signed-file {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding: 8px;
+        background: var(--nuxeo-page-background, #f5f5f5);
+        border-radius: 4px;
+      }
+      .warning {
+        color: var(--nuxeo-warn-text, #de350b);
+        margin-bottom: 12px;
+      }
+      .info {
+        color: var(--nuxeo-text-default, #3a3a54);
+        margin-bottom: 12px;
+      }
+      .link {
+        color: var(--nuxeo-link-color, #0066cc);
+        cursor: pointer;
+        text-decoration: underline;
+      }
+      nuxeo-textarea {
+        --paper-input-container-input: {
+          min-height: 60px;
+        };
+      }
+    </style>
+
+    <nuxeo-resource id="signStatusRequest" auto
+                    path="signature/document/[[document.uid]]"
+                    response="{{_signStatus}}"
+                    on-response="_onStatusResponse"
+                    on-error="_onStatusError">
+    </nuxeo-resource>
+
+    <div class="container">
+      <!-- Signed file section -->
+      <template is="dom-if" if="[[_hasCertificates(_signStatus)]]">
+        <div class="section">
+          <div class="section-title">[[i18n('signature.tab.signedFile')]]</div>
+          <template is="dom-if" if="[[_signStatus.blobFilename]]">
+            <div class="signed-file">
+              <iron-icon icon="editor:insert-drive-file"></iron-icon>
+              <a href="[[_getDownloadUrl(document, _signStatus)]]" target="_blank">[[_signStatus.blobFilename]]</a>
+            </div>
+          </template>
+
+          <div class="section-title">[[i18n('signature.tab.signatures')]]</div>
+          <table class="cert-table">
+            <thead>
+              <tr>
+                <th>[[i18n('signature.tab.subject')]]</th>
+                <th>[[i18n('signature.tab.issuer')]]</th>
+                <th>[[i18n('signature.tab.expiration')]]</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template is="dom-repeat" items="[[_signStatus.certificates]]">
+                <tr>
+                  <td>[[item.subjectDN]]</td>
+                  <td>[[item.issuerDN]]</td>
+                  <td>[[item.notAfter]]</td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </template>
+
+      <!-- Signing form section -->
+      <template is="dom-if" if="[[_canShowSignForm(_signStatus)]]">
+        <div class="section">
+          <div class="section-title">[[i18n('signature.tab.signDocument')]]</div>
+
+          <!-- No write permission -->
+          <template is="dom-if" if="[[!_signStatus.canSign]]">
+            <div class="warning">[[i18n('signature.tab.noWritePermission')]]</div>
+          </template>
+
+          <!-- No certificate -->
+          <template is="dom-if" if="[[_needsCertificate(_signStatus)]]">
+            <div class="info">
+              [[i18n('signature.tab.noCertificate')]]
+            </div>
+          </template>
+
+          <!-- Sign form -->
+          <template is="dom-if" if="[[_canSign(_signStatus)]]">
+            <div class="sign-form">
+              <div class="field">
+                <nuxeo-textarea label="[[i18n('signature.tab.signingReason')]]"
+                                value="{{_signingReason}}"
+                                placeholder="[[i18n('signature.tab.signingReasonPlaceholder')]]">
+                </nuxeo-textarea>
+              </div>
+              <div class="field">
+                <nuxeo-input type="password"
+                             label="[[i18n('signature.tab.certificatePassword')]]"
+                             value="{{_password}}"
+                             required>
+                </nuxeo-input>
+              </div>
+              <paper-button class="primary" on-tap="_sign" disabled$="[[_signing]]">
+                <template is="dom-if" if="[[!_signing]]">
+                  [[i18n('signature.tab.signNow')]]
+                </template>
+                <template is="dom-if" if="[[_signing]]">
+                  [[i18n('signature.tab.signing')]]
+                </template>
+              </paper-button>
+            </div>
+          </template>
+        </div>
+      </template>
+
+      <!-- Unsignable document -->
+      <template is="dom-if" if="[[_isUnsignable(_signStatus)]]">
+        <div class="section">
+          <div class="info">[[i18n('signature.tab.unsignable')]]</div>
+        </div>
+      </template>
+
+      <!-- Root certificate download -->
+      <div class="section">
+        <div class="section-title">[[i18n('signature.tab.rootCertificate')]]</div>
+        <div class="info">[[i18n('signature.tab.rootCertificateInfo')]]</div>
+        <a class="link" href="/nuxeo/api/v1/signature/rootcertificate" target="_blank">
+          [[i18n('signature.tab.downloadRootCert')]]
+        </a>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-labs-signature-tab',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+        document: {
+          type: Object,
+          observer: '_documentChanged'
+        },
+        _signStatus: {
+          type: Object,
+          value: null
+        },
+        _signingReason: {
+          type: String,
+          value: ''
+        },
+        _password: {
+          type: String,
+          value: ''
+        },
+        _signing: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _documentChanged: function() {
+        if (this.document && this.document.uid) {
+          this.$.signStatusRequest.execute();
+        }
+      },
+
+      _hasCertificates: function(status) {
+        return status && status.certificates && status.certificates.length > 0;
+      },
+
+      _canShowSignForm: function(status) {
+        return status && status.signingStatus !== -1;
+      },
+
+      _isUnsignable: function(status) {
+        return status && status.signingStatus === -1;
+      },
+
+      _needsCertificate: function(status) {
+        return status && status.canSign && !status.hasCertificate;
+      },
+
+      _canSign: function(status) {
+        return status && status.canSign && status.hasCertificate &&
+               (status.signingStatus === 0 || status.signingStatus === 2);
+      },
+
+      _getDownloadUrl: function(document, status) {
+        if (document && status && status.blobPath) {
+          return '/nuxeo/nxfile/default/' + document.uid + '/' + status.blobPath;
+        }
+        return '';
+      },
+
+      _sign: function() {
+        if (!this._password) {
+          this.fire('notify', {message: this.i18n('signature.tab.passwordRequired')});
+          return;
+        }
+        this._signing = true;
+        var url = '/nuxeo/api/v1/signature/document/' + this.document.uid;
+        var formData = new URLSearchParams();
+        formData.append('password', this._password);
+        formData.append('reason', this._signingReason || '');
+
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-NXproperties': '*'
+          },
+          credentials: 'same-origin',
+          body: formData.toString()
+        })
+        .then(function(response) {
+          if (!response.ok) {
+            return response.json().then(function(err) {
+              throw new Error(err.message || 'Signing failed');
+            });
+          }
+          return response.json();
+        })
+        .then(function(data) {
+          this._signStatus = data;
+          this._password = '';
+          this._signingReason = '';
+          this._signing = false;
+          this.fire('notify', {message: this.i18n('signature.tab.signSuccess')});
+          this.fire('document-updated');
+        }.bind(this))
+        .catch(function(err) {
+          this._signing = false;
+          this.fire('notify', {message: err.message || this.i18n('signature.tab.signError')});
+        }.bind(this));
+      },
+
+      _onStatusResponse: function() {
+        // Status loaded
+      },
+
+      _onStatusError: function(e) {
+        console.warn('Failed to load signature status', e.detail);
+      }
+    });
+  </script>
+</dom-module>

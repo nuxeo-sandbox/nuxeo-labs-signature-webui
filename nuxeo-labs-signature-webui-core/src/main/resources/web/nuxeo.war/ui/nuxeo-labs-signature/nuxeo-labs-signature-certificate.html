@@ -1,0 +1,284 @@
+<!--
+(C) Copyright 2026 Nuxeo (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+    Thibaud Arguillere
+-->
+
+<!--
+`nuxeo-labs-signature-certificate`
+User certificate management element for the user menu.
+Allows generating, viewing, and deleting the current user's digital certificate.
+@group Nuxeo UI
+@element nuxeo-labs-signature-certificate
+@since 2025.16
+-->
+<dom-module id="nuxeo-labs-signature-certificate">
+  <template>
+    <style include="nuxeo-styles iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+      .container {
+        padding: 16px;
+        max-width: 600px;
+      }
+      .section-title {
+        font-size: 1.1em;
+        font-weight: bold;
+        margin-bottom: 12px;
+        color: var(--nuxeo-title-color, #213f7d);
+      }
+      .cert-info {
+        padding: 12px;
+        background: var(--nuxeo-page-background, #f5f5f5);
+        border-radius: 4px;
+        margin-bottom: 16px;
+        white-space: pre-wrap;
+        font-family: monospace;
+        font-size: 0.85em;
+      }
+      .cert-dates {
+        margin-bottom: 16px;
+      }
+      .cert-dates span {
+        display: block;
+        margin-bottom: 4px;
+      }
+      .field {
+        margin-bottom: 16px;
+      }
+      .info {
+        color: var(--nuxeo-text-default, #3a3a54);
+        margin-bottom: 12px;
+      }
+      .warning {
+        color: var(--nuxeo-warn-text, #de350b);
+        margin-bottom: 12px;
+      }
+      .actions {
+        margin-top: 16px;
+      }
+    </style>
+
+    <nuxeo-page>
+
+      <div slot="header">
+        <span>[[i18n('signature.cert.title')]]</span>
+      </div>
+
+      <div>
+        <nuxeo-card>
+        <div class="section-title">[[i18n('signature.cert.title')]]</div>
+
+        <!-- Loading -->
+        <template is="dom-if" if="[[_loading]]">
+          <paper-spinner-lite active></paper-spinner-lite>
+        </template>
+
+        <!-- Certificate exists -->
+        <template is="dom-if" if="[[_hasCertificate]]">
+          <div class="info">[[i18n('signature.cert.existing')]]</div>
+
+          <template is="dom-if" if="[[_certInfo]]">
+            <div class="cert-info">[[_certInfo]]</div>
+          </template>
+
+          <template is="dom-if" if="[[_startDate]]">
+            <div class="cert-dates">
+              <span><strong>[[i18n('signature.cert.validFrom')]]:</strong> [[_startDate]]</span>
+              <span><strong>[[i18n('signature.cert.validUntil')]]:</strong> [[_endDate]]</span>
+            </div>
+          </template>
+
+          <div class="actions">
+            <paper-button class="secondary" on-tap="_deleteCertificate">
+              [[i18n('signature.cert.delete')]]
+            </paper-button>
+          </div>
+        </template>
+
+        <!-- No certificate -->
+        <template is="dom-if" if="[[_noCertificate]]">
+          <div class="info">[[i18n('signature.cert.noCertificate')]]</div>
+
+          <div class="field">
+            <nuxeo-input type="password"
+                        label="[[i18n('signature.cert.password')]]"
+                        value="{{_password}}"
+                        required>
+            </nuxeo-input>
+          </div>
+          <div class="field">
+            <nuxeo-input type="password"
+                        label="[[i18n('signature.cert.passwordConfirm')]]"
+                        value="{{_passwordConfirm}}"
+                        required>
+            </nuxeo-input>
+          </div>
+          <div class="info">[[i18n('signature.cert.passwordHint')]]</div>
+
+          <div class="actions">
+            <paper-button class="primary" on-tap="_generateCertificate" disabled$="[[_generating]]">
+              <template is="dom-if" if="[[!_generating]]">
+                [[i18n('signature.cert.generate')]]
+              </template>
+              <template is="dom-if" if="[[_generating]]">
+                [[i18n('signature.cert.generating')]]
+              </template>
+            </paper-button>
+          </div>
+        </template>
+        </nuxeo-card>
+      </div>
+
+    </nuxeo-page>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-labs-signature-certificate',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+        _loading: {
+          type: Boolean,
+          value: true
+        },
+        _hasCertificate: {
+          type: Boolean,
+          value: false
+        },
+        _noCertificate: {
+          type: Boolean,
+          value: false
+        },
+        _certInfo: String,
+        _startDate: String,
+        _endDate: String,
+        _password: {
+          type: String,
+          value: ''
+        },
+        _passwordConfirm: {
+          type: String,
+          value: ''
+        },
+        _generating: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      attached: function() {
+        this._loadCertificateStatus();
+      },
+
+      _loadCertificateStatus: function() {
+        this._loading = true;
+        fetch('/nuxeo/api/v1/signature/certificate', {
+          credentials: 'same-origin',
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+          this._loading = false;
+          this._hasCertificate = data.hasCertificate;
+          this._noCertificate = !data.hasCertificate;
+          if (data.hasCertificate) {
+            this._certInfo = data.certificateInfo || '';
+            this._startDate = data.startDate || '';
+            this._endDate = data.endDate || '';
+          }
+        }.bind(this))
+        .catch(function(err) {
+          this._loading = false;
+          console.error('Failed to load certificate status', err);
+        }.bind(this));
+      },
+
+      _generateCertificate: function() {
+        if (!this._password || this._password.length < 8) {
+          this.fire('notify', {message: this.i18n('signature.cert.passwordTooShort')});
+          return;
+        }
+        if (this._password !== this._passwordConfirm) {
+          this.fire('notify', {message: this.i18n('signature.cert.passwordMismatch')});
+          return;
+        }
+        this._generating = true;
+        var formData = new URLSearchParams();
+        formData.append('password', this._password);
+        formData.append('passwordConfirm', this._passwordConfirm);
+
+        fetch('/nuxeo/api/v1/signature/certificate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json'
+          },
+          credentials: 'same-origin',
+          body: formData.toString()
+        })
+        .then(function(response) {
+          if (!response.ok) {
+            return response.json().then(function(err) {
+              throw new Error(err.message || 'Certificate generation failed');
+            });
+          }
+          return response.json();
+        })
+        .then(function(data) {
+          this._generating = false;
+          this._password = '';
+          this._passwordConfirm = '';
+          this._hasCertificate = data.hasCertificate;
+          this._noCertificate = !data.hasCertificate;
+          this._certInfo = data.certificateInfo || '';
+          this._startDate = data.startDate || '';
+          this._endDate = data.endDate || '';
+          this.fire('notify', {message: this.i18n('signature.cert.generateSuccess')});
+        }.bind(this))
+        .catch(function(err) {
+          this._generating = false;
+          this.fire('notify', {message: err.message || this.i18n('signature.cert.generateError')});
+        }.bind(this));
+      },
+
+      _deleteCertificate: function() {
+        if (!confirm(this.i18n('signature.cert.deleteConfirm'))) {
+          return;
+        }
+        fetch('/nuxeo/api/v1/signature/certificate', {
+          method: 'DELETE',
+          credentials: 'same-origin'
+        })
+        .then(function(response) {
+          if (!response.ok) {
+            throw new Error('Failed to delete certificate');
+          }
+          this._hasCertificate = false;
+          this._noCertificate = true;
+          this._certInfo = '';
+          this._startDate = '';
+          this._endDate = '';
+          this.fire('notify', {message: this.i18n('signature.cert.deleteSuccess')});
+        }.bind(this))
+        .catch(function(err) {
+          this.fire('notify', {message: err.message || this.i18n('signature.cert.deleteError')});
+        }.bind(this));
+      }
+    });
+  </script>
+</dom-module>
