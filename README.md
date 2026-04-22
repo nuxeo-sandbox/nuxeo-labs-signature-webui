@@ -28,7 +28,7 @@ In the left drawer, under the user menu, click **Certificates**. Set a password 
 Open a document that has a file attached and go to the **Signature** tab. Enter your certificate password and an optional signing reason, then click **Sign Now**.
 
 > [!NOTE]
-> When a document is signed, the server automatically archives the current file into the **Files** attachment list (`files` schema) before replacing the main file with the signed PDF. This way, the previous file is preserved and visible in the UI (as seen in the screenshot).
+> By default, when a PDF document is signed, the server archives the current file into the **Files** attachment list (`files` schema) before replacing the main file with the signed PDF. This behavior is configurable — see [Signing Behavior](#signing-behavior-nuxeoconf) below.
 
 ![Sign a Document](README-Images/02-Sign.png)
 
@@ -55,6 +55,23 @@ The `nuxeo-signature` addon can be configured via XML extensions. See the [devel
 - Replace the sample root certificate/keystore with your own company CA.
 - Set company information embedded in user certificates (country, organization, organizational unit).
 - Customize the signature layout in signed PDFs (grid position, number of lines/columns, text size).
+
+### Signing Behavior (`nuxeo.conf`)
+
+The `nuxeo-signature` source code defines additional configuration parameters that control how signing handles the original file. These are not covered in the official documentation but can be set in `nuxeo.conf`:
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `org.nuxeo.ecm.signature.disposition.pdf` | `archive` | What to do with the original file when it is a PDF |
+| `org.nuxeo.ecm.signature.disposition.notpdf` | `attach` | What to do with the original file when it is not a PDF |
+| `org.nuxeo.ecm.signature.pdfa` | `false` | Set to `true` to generate PDF/A-1b compliant output |
+| `org.nuxeo.ecm.signature.archive.filename.format` | `" ('archive' yyyy-MM-dd HH:mm:ss)"` | `SimpleDateFormat` pattern appended to the archived filename |
+
+The disposition properties accept three values:
+
+- **`replace`** — The signed PDF replaces the main file (`file:content`). The original is lost.
+- **`archive`** — The signed PDF replaces the main file. The original is saved as an attachment (`files:files`) with a timestamped filename.
+- **`attach`** — The original stays as the main file. The signed PDF is added as an attachment.
 
 ## REST API
 
