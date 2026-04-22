@@ -6,7 +6,7 @@ Nuxeo LTS 2025 plugin (Java 21, Maven) that adds Web UI support (REST endpoints 
 
 - **Parent**: `org.nuxeo:nuxeo-parent:2025.16`
 - **GroupId**: `nuxeo.labs.signature.webui`
-- **Version**: `2025.1.0-SNAPSHOT`
+- **Version**: `2025.2.0-SNAPSHOT`
 
 ## Modules
 
