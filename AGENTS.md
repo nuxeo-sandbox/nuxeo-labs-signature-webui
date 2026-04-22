@@ -51,7 +51,7 @@ No tests exist yet. No CI, no linter, no formatter configured in this repo.
 - **Never bundle crypto/signature JARs** (openpdf, bcprov, bcpkix) — they are provided by the `nuxeo-signature` package.
 - **Web UI HTML files require explicit registration** via the `WebResources` extension point (there is no auto-discovery). See `signature-webui-contrib.xml`.
 - **i18n files must be appended**, not overwritten — see the `<append>` directives in `deployment-fragment.xml`.
-- **WebEngine registration**: The `Nuxeo-WebModule` MANIFEST header must reference `org.nuxeo.ecm.webengine.app.WebEngineModule` (the generic base class) with a `package=` attribute pointing to the Java package to scan. Do NOT reference the `ModuleRoot` class directly.
+- **WebEngine registration**: The `Nuxeo-WebModule` MANIFEST header must reference `org.nuxeo.ecm.webengine.app.WebEngineModule` (the generic base class) with a `package=` attribute pointing to the Java package to scan (slash-separated: `nuxeo/labs/signature/webui`, not dots). The `name=signature` maps to `/api/v1/signature/`. Do NOT reference the `ModuleRoot` class directly.
 
 ## Adding New Code
 
