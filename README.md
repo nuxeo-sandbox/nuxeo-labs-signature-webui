@@ -97,6 +97,10 @@ mvn clean install
 
 To skip unit testing, add `-DskipTests`
 
+## Future Ideas
+
+See [Ideas.md](Ideas.md) for potential future enhancements.
+
 ## Support
 
 **These features are not part of the Nuxeo Production platform.**
