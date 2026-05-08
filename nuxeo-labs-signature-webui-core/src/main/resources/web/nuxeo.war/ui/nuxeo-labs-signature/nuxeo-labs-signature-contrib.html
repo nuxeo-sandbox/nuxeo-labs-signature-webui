@@ -27,7 +27,7 @@ Contributors:
 -->
 <nuxeo-slot-content name="signatureTabItem" slot="DOCUMENT_VIEWS_ITEMS" order="50">
   <template>
-    <nuxeo-filter document="[[document]]" expression="document.facets.indexOf('Folderish') === -1">
+    <nuxeo-filter document="[[document]]" expression="document &amp;&amp; document.properties &amp;&amp; document.properties[&quot;file:content&quot;] &amp;&amp; document.properties[&quot;files:files&quot;]">
       <template>
         <nuxeo-page-item name="signature" label="signature.tab.label"></nuxeo-page-item>
       </template>
@@ -37,7 +37,7 @@ Contributors:
 
 <nuxeo-slot-content name="signatureTabPage" slot="DOCUMENT_VIEWS_PAGES" order="50">
   <template>
-    <nuxeo-filter document="[[document]]" expression="document.facets.indexOf('Folderish') === -1">
+    <nuxeo-filter document="[[document]]" expression="document &amp;&amp; document.properties &amp;&amp; document.properties[&quot;file:content&quot;] &amp;&amp; document.properties[&quot;files:files&quot;]">
       <template>
         <nuxeo-labs-signature-tab name="signature" document="[[document]]"></nuxeo-labs-signature-tab>
       </template>
