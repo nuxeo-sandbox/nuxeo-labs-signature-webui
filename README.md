@@ -87,7 +87,9 @@ This plugin exposes a WebEngine REST endpoint at `/api/v1/signature/`:
 | `GET` | `/document/{docId}` | Get signing status and existing signatures |
 | `POST` | `/document/{docId}` | Sign a document (params: `password`, `reason`) |
 
-## How to Build
+## How to Build and Deploy
+
+### Local Build and Deploy
 
 ```bash
 git clone https://github.com/nuxeo-sandbox/nuxeo-labs-signature-webui
@@ -96,6 +98,18 @@ mvn clean install
 ```
 
 To skip unit testing, add `-DskipTests`
+
+The marketplace package is at nuxeo-labs-signature-webui-package/target/nuxeo-labs-signature-webui-package-{VERSION}.zip
+
+You can then:
+
+```bash
+nuxeoctl mp-install /path/to/nuxeo-labs-signature-webui-package-{VERSION}.zip
+```
+
+### Deploy Using Nuxeo Market Place
+
+The plugin is available publicly, you can just add `nuxeo-labs-signature-webui` to you Nuxeo Studio project's dependencies, or add it to the `NUXEO_PACKAGES` variable when using Docker, etc.
 
 ## Future Ideas
 
@@ -108,10 +122,6 @@ See [Possible-Improvements.md](Possible-Improvements.md) for potential future en
 These solutions are provided for inspiration and we encourage customers to use them as code samples and learning resources.
 
 This is a moving project (no API maintenance, no deprecation process, etc.) If any of these solutions are found to be useful for the Nuxeo Platform in general, they will be integrated directly into platform, not maintained here.
-
-## Nuxeo Marketplace
-
-This package is not yet published on the Nuxeo Marketplace.
 
 ## License
 
