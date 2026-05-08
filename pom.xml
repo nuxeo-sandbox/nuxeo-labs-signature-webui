@@ -9,7 +9,7 @@
 
   <groupId>nuxeo.labs.signature.webui</groupId>
   <artifactId>nuxeo-labs-signature-webui-parent</artifactId>
-  <version>2025.2.0-SNAPSHOT</version>
+  <version>2025.3.0-SNAPSHOT</version>
   <name>Nuxeo Labs Signature for Web UI</name>
   <description>Provides Nuxeo Web UI interface for the Digital Signature plugin (nuxeo-signature)</description>
   <packaging>pom</packaging>

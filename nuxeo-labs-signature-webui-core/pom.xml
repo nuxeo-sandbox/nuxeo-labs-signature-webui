@@ -4,7 +4,7 @@
   <parent>
     <groupId>nuxeo.labs.signature.webui</groupId>
     <artifactId>nuxeo-labs-signature-webui-parent</artifactId>
-    <version>2025.2.0-SNAPSHOT</version>
+    <version>2025.3.0-SNAPSHOT</version>
   </parent>
   <artifactId>nuxeo-labs-signature-webui-core</artifactId>
   <name>Nuxeo Labs Signature for Web UI - Core</name>
