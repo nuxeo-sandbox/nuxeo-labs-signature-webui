@@ -6,6 +6,8 @@ A Nuxeo LTS 2025 plugin that provides a [Nuxeo Web UI](https://doc.nuxeo.com/nxd
 
 The original `nuxeo-signature` plugin was deprecated in LTS 2025 because it relied on the JSF UI, which has been removed. The backend services (certificate management, PDF signing) remain fully functional — this plugin adds the missing Web UI frontend without modifying any of the original server-side code.
 
+![Nuxeo Digital Signature](README-Images/04-AllInOne.png)
+
 > [!NOTE]
 > The workflow described in the [Nuxeo Digital Signature documentation](https://doc.nuxeo.com/userdoc/digital-signature/) fully applies to this plugin.
 
