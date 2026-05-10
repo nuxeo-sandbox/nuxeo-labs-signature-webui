@@ -12,6 +12,9 @@ The original `nuxeo-signature` plugin was deprecated in LTS 2025 because it reli
 > [!IMPORTANT]
 > The default root certificate shipped with `nuxeo-signature` is a sample certificate meant for testing only. For production use, you must configure your own root certificate and company information — see [Configuration](#configuration) below.
 
+> [!WARNING]
+> This plugin exists for Nuxeo LTS 2025 only, there is no LTS 2023 version. Feel free to create it if you need it and to submit a pull request once you are certain it is working :-)
+
 ## Usage
 
 ### 1. Create a Certificate
