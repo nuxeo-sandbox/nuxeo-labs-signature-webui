@@ -1,5 +1,13 @@
 # nuxeo-labs-signature-webui
 
+> [!CAUTION]
+> This is **WORK IN PROGRESS**, trying to downgrade to a LTS2023 version.
+>
+> **DO NOT USE WHILE THIS ALERT IS DISPLAYED**
+
+<hr>
+<hr>
+
 ## Description
 
 A Nuxeo LTS 2025 plugin that provides a [Nuxeo Web UI](https://doc.nuxeo.com/nxdoc/web-ui/) interface for the [Digital Signature](https://doc.nuxeo.com/nxdoc/digital-signature/) addon (`nuxeo-signature`).
