@@ -116,6 +116,12 @@ nuxeoctl mp-install /path/to/nuxeo-labs-signature-webui-package-{VERSION}.zip
 
 The plugin is available publicly, you can just add `nuxeo-labs-signature-webui` to you Nuxeo Studio project's dependencies, or add it to the `NUXEO_PACKAGES` variable when using Docker, etc.
 
+
+## Release Process
+
+Run the `nuxeo-release-plugin` command
+
+
 ## Future Ideas
 
 See [Possible-Improvements.md](Possible-Improvements.md) for potential future enhancements.
