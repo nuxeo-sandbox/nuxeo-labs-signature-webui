@@ -1,16 +1,8 @@
 # nuxeo-labs-signature-webui
 
-> [!CAUTION]
-> This is **WORK IN PROGRESS**, trying to downgrade to a LTS2023 version.
->
-> **DO NOT USE WHILE THIS ALERT IS DISPLAYED**
-
-<hr>
-<hr>
-
 ## Description
 
-A Nuxeo LTS 2025 plugin that provides a [Nuxeo Web UI](https://doc.nuxeo.com/nxdoc/web-ui/) interface for the [Digital Signature](https://doc.nuxeo.com/nxdoc/digital-signature/) addon (`nuxeo-signature`).
+A Nuxeo LTS 2023 plugin that provides a [Nuxeo Web UI](https://doc.nuxeo.com/nxdoc/web-ui/) interface for the [Digital Signature](https://doc.nuxeo.com/nxdoc/digital-signature/) addon (`nuxeo-signature`).
 
 The original `nuxeo-signature` plugin was deprecated in LTS 2025 because it relied on the JSF UI, which has been removed. The backend services (certificate management, PDF signing) remain fully functional — this plugin adds the missing Web UI frontend without modifying any of the original server-side code.
 
@@ -23,7 +15,7 @@ The original `nuxeo-signature` plugin was deprecated in LTS 2025 because it reli
 > The default root certificate shipped with `nuxeo-signature` is a sample certificate meant for testing only. For production use, you must configure your own root certificate and company information — see [Configuration](#configuration) below.
 
 > [!WARNING]
-> This plugin exists for Nuxeo LTS 2025 only, there is no LTS 2023 version. Feel free to create it if you need it and to submit a pull request once you are certain it is working :-)
+> This branch is a **backport to LTS 2023** of the LTS 2025 version of the plugin. It is functionally identical, but LTS 2023 is an older platform: whenever you can, use the most recent version of Nuxeo and the corresponding [LTS 2025 version of this plugin](https://github.com/nuxeo-sandbox/nuxeo-labs-signature-webui).
 
 ## Usage
 
