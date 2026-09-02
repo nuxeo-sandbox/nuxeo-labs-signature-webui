@@ -12,10 +12,9 @@
   <nuxeo-validation>none</nuxeo-validation>
   <production-state>testing</production-state>
   <supported>false</supported>
-  <target-platform>
-    <name>lts</name>
-    <version>[@NUXEO_TARGET_VERSION@,)</version>
-  </target-platform>
+  <platforms>
+    <platform>lts-@NUXEO_TARGET_VERSION@</platform>
+  </platforms>
   <dependencies>
     <package>nuxeo-signature</package>
     <package>nuxeo-web-ui</package>

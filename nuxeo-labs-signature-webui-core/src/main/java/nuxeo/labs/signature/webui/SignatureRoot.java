@@ -18,10 +18,10 @@
  */
 package nuxeo.labs.signature.webui;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static jakarta.servlet.http.HttpServletResponse.SC_CONFLICT;
-import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
-import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_CONFLICT;
+import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,15 +29,15 @@ import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.FormParam;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -80,7 +80,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
  * <li>{@code POST /document/{docId}} - sign a document</li>
  * </ul>
  *
- * @since 2025.16
+ * @since 2023.47
  */
 @Path("/api/v1/signature")
 @WebObject(type = "SignatureRoot")
@@ -116,7 +116,7 @@ public class SignatureRoot extends ModuleRoot {
     /**
      * Checks whether a specific user has a certificate. Restricted to administrators.
      *
-     * @since 2025.16
+     * @since 2023.47
      */
     @GET
     @Path("certificate/{username}")

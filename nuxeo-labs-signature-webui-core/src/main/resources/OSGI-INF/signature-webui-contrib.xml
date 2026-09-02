@@ -6,7 +6,7 @@
 
   <documentation>
     Deploys the Web UI resources and REST endpoints for the Digital Signature addon.
-    @since 2025.16
+    @since 2023.47
   </documentation>
 
   <!-- Register the Web UI entry-point HTML as a web resource -->
